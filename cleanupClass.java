@@ -1,5 +1,6 @@
 package logsDeletionPractice;
 import java.io.File;
+import java.io.*;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,17 +12,18 @@ import java.util.Date;
 
 public class cleanupClass {
 	public static void main(String[] argv) throws Exception {
-	      File logFolder = new File("C:\\Users\\Vaani\\Desktop\\hi");
+	      File logFolder = new File("hi");
 	      boolean deleteStatus = false;
 	      long folderSize = 0;
-	      DateFormat df = new SimpleDateFormat("MMMddyyyy"); 
+	      DateFormat df = new SimpleDateFormat("MMddyyyy"); 
 		  Date today = new Date();
 		  String todayDate = df.format(today); 
-		  File backupLogFolder = new File("C:\\Users\\Vaani\\Desktop\\backup"+ todayDate);
-	      
+		  File backupLogFolder = new File("backup"+ todayDate);
+	      boolean reStartServer = false;
+	     // boolean stopServer = false;
 	      //getting folder size
 	      folderSize = getFolderSize(logFolder);
-	      System.out.println("Folder size is: " +folderSize +"Bytes");
+	      System.out.println("Folder size is: " +folderSize +" Bytes");
 	      
 	      //backup folder
 	    	if(!logFolder.exists()){
@@ -40,7 +42,7 @@ public class cleanupClass {
 	    	System.out.println("Backup folder created");
 	      
 	      //deleting folder
-	      if(folderSize > 100000) {
+	      if(folderSize > 2000000000) {
 	    	  deleteFolder(logFolder);
 	    	  deleteStatus = true;
 	      }
@@ -49,9 +51,24 @@ public class cleanupClass {
 	      else
 	    	  System.out.println("Error in deleting");
 	      
+	      //Restarting the instance.
+	     //stopServer = runStopScript();
+	     //System.out.println("server stopped");
+	    // System.out.println(stopServer);
+	     /* if(stopServer == true) {
+	    	  startServer = runStartScript();
+	      }*/
+	      //System.out.println("server started");
+	      //System.out.println(startServer);
+	      reStartServer = runStopScript();
+	      if(reStartServer == true) {
+	    	  System.out.println("Server instance restarted");
+	      }
+	      
+	      
 	   }
 	
-	   //function to fetch the file of the log folder
+	   //function to fetch the size of the log folder
 	   public static long getFolderSize(File dir) {
 		    long length = 0;
 		    File[] files = dir.listFiles();
@@ -124,4 +141,68 @@ public class cleanupClass {
 	      }
 	      return dir.delete();
 	   }
+	   
+	   //function to stop the server instance
+	   public static boolean runStopScript() {
+		    try {
+	            Runtime.getRuntime().exec("cmd /c start cmd.exe /K \"stopManagedWebLogic_custom.cmd Test_Server http://m4okia10:7001\"");
+	            return true;
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return false;
+	        }/*finally {
+	    		 System.out.println("Server stopped");
+	    		 boolean startStatus = runStartScript();
+	    		 if(startStatus == true)
+	    			 return true;
+	    		 else
+	    			 return false;
+	    	 }*/
+	        /*try {
+	        	//System.out.println("Before running.");
+	            p = run.exec("cmd.exe /k" +cmd);
+	            //System.out.println("After running.");
+	            //p.waitFor();
+	            
+	            System.out.println("RUN.COMPLETED.SUCCESSFULLY");
+	            return true;
+	 	   }
+	        catch (IOException e) {
+	            e.printStackTrace();
+	            System.out.println("ERROR.RUNNING.CMD");
+	            //p.destroy();
+	            return false;
+	        }
+	        finally {
+	        	
+	        	p.destroy();
+	        }*/
+	   }  
+	   //function to start the server instance
+  /*   public static boolean runStartScript() {
+    	 try {
+	            Runtime.getRuntime().exec("cmd /c start cmd.exe /K \"startManagedWebLogic.cmd Test_Server http://m4okia10:7001\"");
+	            System.out.println("Server Started");
+	            return true;
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+
+		   Runtime run = Runtime.getRuntime();
+	        Process p = null;
+	        String cmd = "startManagedWebLogic.cmd Test_Server http://m4okia10:7001";
+	        try {
+	            p = run.exec(cmd);
+	            p.getErrorStream();
+	            System.out.println("RUN.COMPLETED.SUCCESSFULLY");
+	            return true;
+	 	   }
+	        catch (IOException e) {
+	            e.printStackTrace();
+	            System.out.println("ERROR.RUNNING.CMD");
+	            p.destroy();
+	            return false;
+	        }
+	   }*/
 }
